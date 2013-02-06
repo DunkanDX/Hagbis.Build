@@ -18,5 +18,9 @@ namespace Hagbis.Build {
             get { return parameters; }
             set { parameters = value; }
         }
+        public override object Accept(ITaskProcessor processor) {
+            if(processor == null) return null;
+            return processor.Process(this);
+        }
     }
 }

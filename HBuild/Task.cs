@@ -5,13 +5,14 @@ using System.Text;
 using System.Xml.Serialization;
 
 namespace Hagbis.Build {
-    public class Task {
+    public abstract class Task {
         TextProcessing[] textProcessingList;
         [XmlElement("TextProcessing")]
         public TextProcessing[] TextProcessingList {
             get { return textProcessingList; }
             set { textProcessingList = value; }
         }
+        public abstract object Accept(ITaskProcessor processor);
     }
     public class TextProcessing {
         TextProcessingType processingType;

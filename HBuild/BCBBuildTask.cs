@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace Hagbis.Build {
     public class BCBBuildTask : Task {
-        BCBProjectProcessingItem[] processing;
+        BCBProjectProcessingItem[] processingItems;
         string addDefines;
         string projectPath;
         [XmlAttribute("projectPath")]
@@ -21,8 +21,12 @@ namespace Hagbis.Build {
         }
         [XmlElement("ProcessingItem")]
         public BCBProjectProcessingItem[] ProcessingItems {
-            get { return processing; }
-            set { processing = value; }
+            get { return processingItems; }
+            set { processingItems = value; }
+        }
+        public override object Accept(ITaskProcessor processor) {
+            if(processor == null) return null;
+            return processor.Process(this);
         }
     }
     public class BCBProjectProcessingItem {

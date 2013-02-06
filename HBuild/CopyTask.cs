@@ -30,5 +30,9 @@ namespace Hagbis.Build {
             get { return exclude; }
             set { exclude = value; }
         }
+        public override object Accept(ITaskProcessor processor) {
+            if(processor == null) return null;
+            return processor.Process(this);
+        }
     }
 }

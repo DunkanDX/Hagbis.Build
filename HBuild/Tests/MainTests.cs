@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace Hagbis.Build.Tests {
     [TestFixture]
     public class MainTests {
-        public Stream GetTestXml1() {
+        Stream GetTestXml1() {
             return GetType().Assembly.GetManifestResourceStream("Hagbis.Build.Tests.ProjectForTest.xml");
         }
         [Test]
@@ -51,6 +51,21 @@ namespace Hagbis.Build.Tests {
             Assert.AreEqual("destPath", copyTask.DestPath);
             Assert.AreEqual("exe;com", copyTask.Include);
             Assert.AreEqual("txt;doc", copyTask.Exclude);
+
+            ExecTask execTask = project.Tasks[2] as ExecTask;
+            Assert.IsNotNull(execTask);
+            Assert.AreEqual(@"C:\sds\sds.exe", execTask.ExecPath);
+            Assert.AreEqual(3, execTask.Parameters.Length);
+            Assert.AreEqual("-s", execTask.Parameters[0]);
+            Assert.AreEqual("-t", execTask.Parameters[1]);
+            Assert.AreEqual("%SOURCE%", execTask.Parameters[2]);
+
+            Assert.AreEqual(2, project.Variables.Length);
+            Assert.AreEqual("SP", project.Variables[0].Name);
+            Assert.AreEqual(@"C:\Tests", project.Variables[0].Value);
+            Assert.AreEqual("SOURCE", project.Variables[1].Name);
+            Assert.AreEqual(@"C:\Source", project.Variables[1].Value);
+            
         }
     }
 }
