@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 
 namespace Hagbis.Build {
     public class CopyTask : Task {
+        bool recursive;
         string exclude;
         string include;
         string destPath;
@@ -29,6 +30,11 @@ namespace Hagbis.Build {
         public string Exclude {
             get { return exclude; }
             set { exclude = value; }
+        }
+        [XmlAttribute("recursive")]
+        public bool Recursive {
+            get { return recursive; }
+            set { recursive = value; }
         }
         public override object Accept(ITaskProcessor processor) {
             if(processor == null) return null;

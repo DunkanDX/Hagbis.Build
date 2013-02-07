@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -12,9 +13,17 @@ namespace Hagbis.Build {
             this.project = project;
             if(project.Variables != null) {
                 foreach(var variable in project.Variables) {
-                    preparedVariables.Add(new Tuple<string, string>(string.Concat("%", variable.Name, "%"), variable.Value));
+                    preparedVariables.Add(new Tuple<string, string>(string.Concat("%", variable.Name.ToUpper(), "%"), variable.Value));
                 }
             }
+            DateTime now = DateTime.Now;
+            preparedVariables.Add(new Tuple<string, string>("%DATETIME%", now.ToString("yyyyMMdd_HHmmss")));
+            preparedVariables.Add(new Tuple<string, string>("%DATE%", now.ToString("yyyyMMdd")));
+            preparedVariables.Add(new Tuple<string, string>("%TIME%", now.ToString("HHmmss")));
+            preparedVariables.Add(new Tuple<string, string>("%DTHASH%", now.ToBinary().ToString()));
+            preparedVariables.Add(new Tuple<string, string>("%PROGRAM%", Path.GetDirectoryName(typeof(Program).Assembly.Location)));
+            preparedVariables.Add(new Tuple<string, string>("%7ZEXE%", Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "7za.exe")));
+            preparedVariables.Add(new Tuple<string, string>("%7ZSFX%", Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "7z.sfx")));
         }
         public List<object> Process() {
             if(project.Tasks == null) return null;
@@ -61,6 +70,11 @@ namespace Hagbis.Build {
             task.Exclude = ProcessString(task.Exclude);
             return null;
         }
+        object ITaskProcessor.Process(DeleteTask task) {
+            ProcessBaseTask(task);
+            task.PathToDelete = ProcessString(task.PathToDelete);
+            return null;
+        }
 
         object ITaskProcessor.Process(ExecTask task) {
             ProcessBaseTask(task);
@@ -72,8 +86,12 @@ namespace Hagbis.Build {
             }
             return null;
         }
+        object ITaskProcessor.Process(SleepTask task) {
+            return ProcessBaseTask(task);
+        }
 
         string ProcessString(string str) {
+            if(string.IsNullOrEmpty(str)) return str;
             string result = str;
             foreach(var variable in preparedVariables) {
                 result = result.Replace(variable.Item1, variable.Item2);

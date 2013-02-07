@@ -8,5 +8,7 @@ namespace Hagbis.Build {
         object Process(BCBBuildTask task);
         object Process(CopyTask task);
         object Process(ExecTask task);
+        object Process(SleepTask task);
+        object Process(DeleteTask task);
     }
 }

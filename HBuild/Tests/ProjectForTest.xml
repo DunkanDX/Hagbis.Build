@@ -5,17 +5,18 @@
   <Variable name="SP" value="C:\Tests"/>
   <Variable name="SOURCE" value="C:\Source"/>
   <Tasks>
-    <BCBBuildTask projectPath="%SP%\Super.bpr" addDefines="TRIPL_ONE">
+    <BCBBuild projectPath="%SP%\Super.bpr" addDefines="TRIPL_ONE">
       <ProcessingItem key="key1" toAdd="addOne" toRemove="removeTwo" />
       <ProcessingItem key="key2" toAdd="addOne2" toRemove="removeTwo2" />
       <TextProcessing pattern="pt" result="res" type="Replace"/>
-    </BCBBuildTask>
-    <CopyTask sourcePath="sourcePath" destPath="destPath" include="exe;com" exclude="txt;doc"/>
-    <ExecTask>
+    </BCBBuild>
+    <Copy id="copyTask1" sourcePath="sourcePath" destPath="destPath" include="exe;com" exclude="txt;doc" recursive="true"/>
+    <Exec>
       <ExecPath>C:\sds\sds.exe</ExecPath>
       <Parameter>-s</Parameter>
       <Parameter>-t</Parameter>
       <Parameter>%SOURCE%</Parameter>
-    </ExecTask>
+    </Exec>
+    <Delete relatedTaskId="copyTask1" pathToDelete="%SP%\333" recursive="true" onlyFiles="false"/>
   </Tasks>
 </Project>

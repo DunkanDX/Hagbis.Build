@@ -20,15 +20,23 @@ namespace Hagbis.Build {
             get { return copyOption; }
             set { copyOption = value; }
         }
+        public string CopyOptionInclude {
+            get { return copyOption == null ? null : copyOption.Include; }
+        }
+        public string CopyOptionExclude {
+            get { return copyOption == null ? null : copyOption.Exclude; }
+        }
         [XmlElement("Variable")]
         public Variable[] Variables {
             get { return variables; }
             set { variables = value; }
         }
         [XmlArray("Tasks")]
-        [XmlArrayItem("BCBBuildTask", typeof(BCBBuildTask))]
-        [XmlArrayItem("CopyTask", typeof(CopyTask))]
-        [XmlArrayItem("ExecTask", typeof(ExecTask))]
+        [XmlArrayItem("BCBBuild", typeof(BCBBuildTask))]
+        [XmlArrayItem("Copy", typeof(CopyTask))]
+        [XmlArrayItem("Exec", typeof(ExecTask))]
+        [XmlArrayItem("Delete", typeof(DeleteTask))]
+        [XmlArrayItem("Sleep", typeof(SleepTask))]
         public Task[] Tasks {
             get { return tasks; }
             set { tasks = value; }

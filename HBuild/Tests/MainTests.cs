@@ -26,7 +26,7 @@ namespace Hagbis.Build.Tests {
             Assert.AreEqual("exe;com", project.CopyOption.Include);
             Assert.AreEqual("txt;doc", project.CopyOption.Exclude);
             Assert.IsNotNull(project.Tasks);
-            Assert.AreEqual(3, project.Tasks.Length);
+            Assert.AreEqual(4, project.Tasks.Length);
             Task task = project.Tasks[0];
             Assert.IsNotNull(task);
             Assert.AreEqual(1, task.TextProcessingList.Length);
@@ -35,7 +35,7 @@ namespace Hagbis.Build.Tests {
             Assert.AreEqual(TextProcessingType.Replace, task.TextProcessingList[0].ProcessingType);
             BCBBuildTask bcbBuildTask = task as BCBBuildTask;
             Assert.IsNotNull(bcbBuildTask);
-            Assert.AreEqual("%SP%\\Super.bpr", bcbBuildTask.ProjectPath);
+            Assert.AreEqual(@"%SP%\Super.bpr", bcbBuildTask.ProjectPath);
             Assert.AreEqual("TRIPL_ONE", bcbBuildTask.AddDefines);
             Assert.AreEqual(2, bcbBuildTask.ProcessingItems.Length);
             Assert.AreEqual("key1", bcbBuildTask.ProcessingItems[0].Key);
@@ -51,6 +51,7 @@ namespace Hagbis.Build.Tests {
             Assert.AreEqual("destPath", copyTask.DestPath);
             Assert.AreEqual("exe;com", copyTask.Include);
             Assert.AreEqual("txt;doc", copyTask.Exclude);
+            Assert.AreEqual(true, copyTask.Recursive);
 
             ExecTask execTask = project.Tasks[2] as ExecTask;
             Assert.IsNotNull(execTask);
@@ -65,7 +66,19 @@ namespace Hagbis.Build.Tests {
             Assert.AreEqual(@"C:\Tests", project.Variables[0].Value);
             Assert.AreEqual("SOURCE", project.Variables[1].Name);
             Assert.AreEqual(@"C:\Source", project.Variables[1].Value);
-            
+
+            DeleteTask deleteTask = project.Tasks[3] as DeleteTask;
+            Assert.IsNotNull(deleteTask);
+            Assert.AreEqual("copyTask1", deleteTask.RelatedTaskId);
+            Assert.AreEqual(@"%SP%\333", deleteTask.PathToDelete);
+            Assert.AreEqual(true, deleteTask.Recursive);
+            Assert.AreEqual(false, deleteTask.OnlyFiles);
+
+            project.ProcessVariables();
+
+            Assert.AreEqual(@"C:\Tests\Super.bpr", bcbBuildTask.ProjectPath);
+            Assert.AreEqual(@"C:\Source", execTask.Parameters[2]);
+            Assert.AreEqual(@"C:\Tests\333", deleteTask.PathToDelete);
         }
     }
 }

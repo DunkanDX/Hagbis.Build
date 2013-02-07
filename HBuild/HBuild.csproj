@@ -47,6 +47,7 @@
       <HintPath>..\..\..\..\..\..\NUnit 2.4.7\bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -56,23 +57,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BCBBuildTask.cs" />
+    <Compile Include="CommonSettings.cs" />
     <Compile Include="CopyTask.cs" />
+    <Compile Include="DeleteTask.cs" />
     <Compile Include="ExecTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="ITaskProcessor.cs" />
+    <Compile Include="TaskExecutor.cs" />
     <Compile Include="Tests\MainTests.cs" />
     <Compile Include="VariablesProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="7z.sfx" />
+    <Content Include="7z.sfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Tests\ProjectForTest.xml" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="7za.exe" />
+    <Content Include="7za.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
