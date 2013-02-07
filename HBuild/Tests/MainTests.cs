@@ -38,12 +38,15 @@ namespace Hagbis.Build.Tests {
             Assert.AreEqual(@"%SP%\Super.bpr", bcbBuildTask.ProjectPath);
             Assert.AreEqual("TRIPL_ONE", bcbBuildTask.AddDefines);
             Assert.AreEqual(2, bcbBuildTask.ProcessingItems.Length);
-            Assert.AreEqual("key1", bcbBuildTask.ProcessingItems[0].Key);
+            Assert.AreEqual("key1", bcbBuildTask.ProcessingItems[0].Element);
+            Assert.AreEqual("a1", bcbBuildTask.ProcessingItems[0].Attribute);
             Assert.AreEqual("addOne", bcbBuildTask.ProcessingItems[0].ToAdd);
             Assert.AreEqual("removeTwo", bcbBuildTask.ProcessingItems[0].ToRemove);
-            Assert.AreEqual("key2", bcbBuildTask.ProcessingItems[1].Key);
+            Assert.IsNull(bcbBuildTask.ProcessingItems[0].Value);
+            Assert.AreEqual("key2", bcbBuildTask.ProcessingItems[1].Element);
+            Assert.AreEqual("a2", bcbBuildTask.ProcessingItems[1].Attribute);
             Assert.AreEqual("addOne2", bcbBuildTask.ProcessingItems[1].ToAdd);
-            Assert.AreEqual("removeTwo2", bcbBuildTask.ProcessingItems[1].ToRemove);
+            Assert.AreEqual("11", bcbBuildTask.ProcessingItems[1].Value);
 
             CopyTask copyTask = project.Tasks[1] as CopyTask;
             Assert.IsNotNull(copyTask);

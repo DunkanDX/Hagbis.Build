@@ -17,6 +17,7 @@ namespace Hagbis.Build {
                 Console.WriteLine("File not found: {0}", args[0]);
                 return 1;
             }
+            CommonSettings.Load();
             try{
                 XmlSerializer serializer = new XmlSerializer(typeof(Project));
                 Project project;

@@ -30,13 +30,20 @@ namespace Hagbis.Build {
         }
     }
     public class BCBProjectProcessingItem {
+        string val;
+        string attribute;
         string toAdd;
         string toRemove;
-        string key;
-        [XmlAttribute("key")]
-        public string Key {
-            get { return key; }
-            set { key = value; }
+        string element;
+        [XmlAttribute("element")]
+        public string Element {
+            get { return element; }
+            set { element = value; }
+        }
+        [XmlAttribute("attribute")]
+        public string Attribute {
+            get { return attribute; }
+            set { attribute = value; }
         }
         [XmlAttribute("toRemove")]
         public string ToRemove {
@@ -47,6 +54,11 @@ namespace Hagbis.Build {
         public string ToAdd {
             get { return toAdd; }
             set { toAdd = value; }
+        }
+        [XmlAttribute("value")]
+        public string Value {
+            get { return val; }
+            set { val = value; }
         }
     }
 }

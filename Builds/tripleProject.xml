@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+  <Name>TripleProject</Name>
+  <CopyOption exclude=".tds;.ils;.ild;.ilc;.ilf;.psd;Thumbs.db;Dannie.txt"/>
+  <Variable name="BIN" value="D:\Dunkan\Work\Projects\BuilderProjects\Viktoria1\develop\bin"/>
+  <Variable name="SOURCECODE" value="D:\Dunkan\Work\Projects\BuilderProjects\Viktoria1\develop"/>
+  <Variable name="DEST" value="d:\Dunkan\Work\Release\Triple"/>
+  <Tasks>
+    <!-- ONE -->
+    <BCBBuild projectPath="%SOURCECODE%\Victory\Fire3D.bpr" addDefines="TRIP_ONE">
+      <ProcessingItem element="IDLCFLAGS" attribute="value" toAdd="" toRemove="-D_DEBUG" />
+      <ProcessingItem element="CFLAG1" attribute="value" value="-O2 -O-g -O-v -O-i -O-S -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -6 -b- -k- -vi -c -tW -tWM" />
+      <ProcessingItem element="PFLAGS" attribute="value" value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M" />
+      <ProcessingItem element="AFLAGS" attribute="value" toAdd="/zn" toRemove="/zi" />
+      <ProcessingItem element="LFLAGS" attribute="value" toAdd="" toRemove="-v" />
+    </BCBBuild>
+    <BCBBuild projectPath="%SOURCECODE%\AOK.bpr" addDefines="TRIP_ONE">
+      <ProcessingItem element="IDLCFLAGS" attribute="value" toAdd="" toRemove="-D_DEBUG" />
+      <ProcessingItem element="CFLAG1" attribute="value" value="-O2 -O-g -O-v -O-i -O-S -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -6 -b- -k- -vi -c -tW -tWM" />
+      <ProcessingItem element="PFLAGS" attribute="value" value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M" />
+      <ProcessingItem element="AFLAGS" attribute="value" toAdd="/zn" toRemove="/zi" />
+      <ProcessingItem element="LFLAGS" attribute="value" toAdd="" toRemove="-v" />
+    </BCBBuild>
+    <Copy sourcePath="%BIN%\DVOZ" destPath="%DEST%\%DATETIME%\PACK1\DVOZ"  recursive="true"/>
+    <Copy sourcePath="%BIN%\FireMap" destPath="%DEST%\%DATETIME%\PACK1\FireMap" recursive="true"/>
+    <Copy sourcePath="%BIN%\Flash" destPath="%DEST%\%DATETIME%\PACK1\Flash" recursive="true"/>
+    <Copy sourcePath="%BIN%\Pictures" destPath="%DEST%\%DATETIME%\PACK1\Pictures" recursive="true"/>
+    <Copy sourcePath="%BIN%\PodgotDannih" destPath="%DEST%\%DATETIME%\PACK1\PodgotDannih" recursive="true"/>
+    <Copy sourcePath="%BIN%\Victory" destPath="%DEST%\%DATETIME%\PACK1\Victory" recursive="true"/>
+    <Copy sourcePath="%BIN%\БД" destPath="%DEST%\%DATETIME%\PACK1\БД" recursive="true"/>
+    <Copy sourcePath="%BIN%" destPath="%DEST%\%DATETIME%\PACK1" recursive="false"/>
+   <Exec>
+      <ExecPath>%7ZEXE%</ExecPath>
+      <Parameter>a -sfx%7ZSFX% -t7z</Parameter>
+      <Parameter>"%DEST%\%DATETIME%\PACK1.exe"</Parameter>
+      <Parameter>"%DEST%\%DATETIME%\PACK1\*"</Parameter>
+      <Parameter>-ms -mmt -y</Parameter>
+    </Exec>
+
+    <!-- TWO -->
+    <BCBBuild projectPath="%SOURCECODE%\AOK.bpr" addDefines="TRIP_TWO">
+      <ProcessingItem element="IDLCFLAGS" attribute="value" toAdd="" toRemove="-D_DEBUG" />
+      <ProcessingItem element="CFLAG1" attribute="value" value="-O2 -O-g -O-v -O-i -O-S -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -6 -b- -k- -vi -c -tW -tWM" />
+      <ProcessingItem element="PFLAGS" attribute="value" value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M" />
+      <ProcessingItem element="AFLAGS" attribute="value" toAdd="/zn" toRemove="/zi" />
+      <ProcessingItem element="LFLAGS" attribute="value" toAdd="" toRemove="-v" />
+    </BCBBuild>
+    <BCBBuild projectPath="%SOURCECODE%\Victory\Fire3D.bpr" addDefines="TRIP_TWO">
+      <ProcessingItem element="IDLCFLAGS" attribute="value" toAdd="" toRemove="-D_DEBUG" />
+      <ProcessingItem element="CFLAG1" attribute="value" value="-O2 -O-g -O-v -O-i -O-S -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -6 -b- -k- -vi -c -tW -tWM" />
+      <ProcessingItem element="PFLAGS" attribute="value" value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M" />
+      <ProcessingItem element="AFLAGS" attribute="value" toAdd="/zn" toRemove="/zi" />
+      <ProcessingItem element="LFLAGS" attribute="value" toAdd="" toRemove="-v" />
+    </BCBBuild>
+    <BCBBuild projectPath="%SOURCECODE%\Victory2\Fire3DOU.bpr">
+      <ProcessingItem element="IDLCFLAGS" attribute="value" toAdd="" toRemove="-D_DEBUG" />
+      <ProcessingItem element="CFLAG1" attribute="value" value="-O2 -O-g -O-v -O-i -O-S -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -6 -b- -k- -vi -c -tW -tWM" />
+      <ProcessingItem element="PFLAGS" attribute="value" value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M" />
+      <ProcessingItem element="AFLAGS" attribute="value" toAdd="/zn" toRemove="/zi" />
+      <ProcessingItem element="LFLAGS" attribute="value" toAdd="" toRemove="-v" />
+    </BCBBuild>
+    <Copy sourcePath="%BIN%\DVOZ" destPath="%DEST%\%DATETIME%\PACK2\DVOZ"  recursive="true"/>
+    <Copy sourcePath="%BIN%\Flash" destPath="%DEST%\%DATETIME%\PACK2\Flash" recursive="true"/>
+    <Copy sourcePath="%BIN%\Pictures" destPath="%DEST%\%DATETIME%\PACK2\Pictures" recursive="true"/>
+    <Copy sourcePath="%BIN%\instr" destPath="%DEST%\%DATETIME%\PACK2\instr" recursive="true"/>
+
+    <Copy sourcePath="%BIN%\SiUO" destPath="%DEST%\%DATETIME%\PACK2\SiUO" recursive="true"/>
+    <Copy sourcePath="%BIN%\taktika" destPath="%DEST%\%DATETIME%\PACK2\taktika" recursive="true"/>
+    <Copy sourcePath="%BIN%\TeoriaOVK" destPath="%DEST%\%DATETIME%\PACK2\TeoriaOVK" recursive="true"/>
+    <Copy sourcePath="%BIN%\TP" destPath="%DEST%\%DATETIME%\PACK2\TP" recursive="true"/>
+    <Copy sourcePath="%BIN%\Victory" destPath="%DEST%\%DATETIME%\PACK2\Victory" recursive="true"/>
+    <Copy sourcePath="%BIN%\Victory2" destPath="%DEST%\%DATETIME%\PACK2\Victory2" recursive="true"/>
+    <Copy sourcePath="%BIN%\БД" destPath="%DEST%\%DATETIME%\PACK2\БД" recursive="true"/>
+    <Copy sourcePath="%BIN%" destPath="%DEST%\%DATETIME%\PACK2" recursive="false"/>
+    <Exec>
+      <ExecPath>%7ZEXE%</ExecPath>
+      <Parameter>a -sfx%7ZSFX% -t7z</Parameter>
+      <Parameter>"%DEST%\%DATETIME%\PACK2.exe"</Parameter>
+      <Parameter>"%DEST%\%DATETIME%\PACK2\*"</Parameter>
+      <Parameter>-ms -mmt -y</Parameter>
+    </Exec>
+    
+
+    <!-- THREE -->
+    <BCBBuild projectPath="%SOURCECODE%\Victory\Fire3D.bpr" addDefines="TRIP_THREE">
+      <ProcessingItem element="IDLCFLAGS" attribute="value" toAdd="" toRemove="-D_DEBUG" />
+      <ProcessingItem element="CFLAG1" attribute="value" value="-O2 -O-g -O-v -O-i -O-S -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -6 -b- -k- -vi -c -tW -tWM" />
+      <ProcessingItem element="PFLAGS" attribute="value" value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M" />
+      <ProcessingItem element="AFLAGS" attribute="value" toAdd="/zn" toRemove="/zi" />
+      <ProcessingItem element="LFLAGS" attribute="value" toAdd="" toRemove="-v" />
+    </BCBBuild>
+    <BCBBuild projectPath="%SOURCECODE%\AOK.bpr" addDefines="TRIP_THREE">
+      <ProcessingItem element="IDLCFLAGS" attribute="value" toAdd="" toRemove="-D_DEBUG" />
+      <ProcessingItem element="CFLAG1" attribute="value" value="-O2 -O-g -O-v -O-i -O-S -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -6 -b- -k- -vi -c -tW -tWM" />
+      <ProcessingItem element="PFLAGS" attribute="value" value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M" />
+      <ProcessingItem element="AFLAGS" attribute="value" toAdd="/zn" toRemove="/zi" />
+      <ProcessingItem element="LFLAGS" attribute="value" toAdd="" toRemove="-v" />
+    </BCBBuild>
+
+    <Copy sourcePath="%BIN%\Victory" destPath="%DEST%\%DATETIME%\PACK3\Victory" recursive="true"/>
+    <Copy sourcePath="%BIN%\БД" destPath="%DEST%\%DATETIME%\PACK3\БД" recursive="true"/>
+    <Copy sourcePath="%BIN%" destPath="%DEST%\%DATETIME%\PACK3" recursive="false"/>
+    <Exec>
+      <ExecPath>%7ZEXE%</ExecPath>
+      <Parameter>a -sfx%7ZSFX% -t7z</Parameter>
+      <Parameter>"%DEST%\%DATETIME%\PACK3.exe"</Parameter>
+      <Parameter>"%DEST%\%DATETIME%\PACK3\*"</Parameter>
+      <Parameter>-ms -mmt -y</Parameter>
+    </Exec>
+
+    <Delete pathToDelete="%DEST%\%DATETIME%\PACK1" recursive="true"/>
+    <Delete pathToDelete="%DEST%\%DATETIME%\PACK2" recursive="true"/>
+    <Delete pathToDelete="%DEST%\%DATETIME%\PACK3" recursive="true"/>
+  </Tasks>
+</Project>

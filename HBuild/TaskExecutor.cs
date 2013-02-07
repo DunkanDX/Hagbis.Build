@@ -5,10 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Xml;
 
 namespace Hagbis.Build {
     public class TaskExecutor : ITaskProcessor { 
         readonly Project project;
+        readonly static char[] separatorChars = new char[] { ';' };
+        readonly static string separatorString = ";";
         readonly Dictionary<string, string[]> processedFilesDict = new Dictionary<string, string[]>();
         readonly Dictionary<string, string[]> processedDirectoriesDict = new Dictionary<string, string[]>();
         public TaskExecutor(Project project) {
@@ -26,8 +29,7 @@ namespace Hagbis.Build {
         }
         object ITaskProcessor.Process(BCBBuildTask task) {
             if(task == null) return null;
-            string project = task.ProjectPath;
-            string projectName = Path.GetFileNameWithoutExtension(project);
+            string project = task.ProjectPath;            
             string projectDir = Path.GetDirectoryName(project);
             if(!File.Exists(CommonSettings.BprToMakExe)) {
                 return new FileNotFoundException(string.Format("File not found {0}", CommonSettings.BprToMakExe));                
@@ -37,6 +39,8 @@ namespace Hagbis.Build {
             }
             string currentDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(projectDir);
+            bool removeProjectFile = PrepareProject(ref project, task);
+            string projectName = Path.GetFileNameWithoutExtension(project);
             try {
                 BprToMak(project, projectName);
                 Make(project, projectName);
@@ -44,10 +48,63 @@ namespace Hagbis.Build {
                 return ex;
             } finally {
                 Directory.SetCurrentDirectory(currentDir);
+                if(removeProjectFile && File.Exists(project))
+                    File.Delete(project);
             }
             return null;
         }
 
+        const string DefinesTag = "USERDEFINES";
+
+        static bool PrepareProject(ref string project, BCBBuildTask task) {
+            if(string.IsNullOrEmpty(task.AddDefines) && (task.ProcessingItems == null || task.ProcessingItems.Length == 0))
+                return false;
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(project);
+            if(!string.IsNullOrEmpty(task.AddDefines)) {
+                XmlNodeList definesNodeList = xmlDoc.GetElementsByTagName(DefinesTag);
+                foreach(XmlNode node in definesNodeList) {
+                    node.Attributes["value"].Value = string.Concat(node.Attributes["value"].Value, separatorString, string.Join(separatorString, task.AddDefines.Split(separatorChars, StringSplitOptions.RemoveEmptyEntries)), separatorString);
+                }
+            }
+            if(task.ProcessingItems != null) {
+                foreach(BCBProjectProcessingItem item in task.ProcessingItems) {
+                    if(string.IsNullOrEmpty(item.Element)) continue;
+                    XmlNodeList nodeList = xmlDoc.GetElementsByTagName(item.Element);
+                    string[] removeList = string.IsNullOrEmpty(item.ToRemove) ? null : item.ToRemove.Split(new string[] { ";;" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach(XmlNode node in nodeList) {
+                        if(string.IsNullOrEmpty(item.Attribute)) continue;
+                        XmlAttribute attribute = node.Attributes[item.Attribute];
+                        if(attribute == null) {
+                            attribute = xmlDoc.CreateAttribute(item.Attribute); 
+                            node.Attributes.Append(attribute);
+                        }
+                        if(item.Value != null) {
+                            attribute.Value = item.Value;
+                            continue;
+                        }
+                        string value = attribute.Value;                        
+                        if(removeList != null) {
+                            foreach(var remove in removeList) {
+                                value = value.Replace(remove, "");
+                            }
+                        }
+                        if(!string.IsNullOrEmpty(item.ToAdd)) {
+                            value = value + item.ToAdd;
+                        }
+                        attribute.Value = value;
+                    }
+                }
+            }
+            string dir = Path.GetDirectoryName(project);
+            string projectName = Path.GetFileNameWithoutExtension(project);
+            project = Path.Combine(dir, string.Concat(projectName, Guid.NewGuid().ToString("N"), ".bpr"));
+            xmlDoc.Save(project);
+            string contect = File.ReadAllText(project);
+            contect.Replace("&#xD;&#xA;", Environment.NewLine);
+            File.WriteAllText(project, contect);
+            return true;
+        }
         static void BprToMak(string project, string projectName) {
             Console.WriteLine("Start bpr2mak for {0}...", project);
             ProcessStartInfo psi = new ProcessStartInfo(CommonSettings.BprToMakExe, string.Format("-o{0}.mak {0}.bpr", projectName));
@@ -63,7 +120,7 @@ namespace Hagbis.Build {
 
         static void Make(string project, string projectName) {
             Console.WriteLine("Start make for {0}...", project);
-            ProcessStartInfo psi = new ProcessStartInfo(CommonSettings.MakeExe, string.Format("-f{0}.mak", projectName));
+            ProcessStartInfo psi = new ProcessStartInfo(CommonSettings.MakeExe, string.Format("-B -f{0}.mak", projectName));
             psi.UseShellExecute = false;
             psi.RedirectStandardOutput = true;
             Process process = Process.Start(psi);
@@ -86,45 +143,44 @@ namespace Hagbis.Build {
                        (!string.IsNullOrEmpty(project.CopyOptionExclude) && !string.IsNullOrEmpty(task.Include)) ||
                         (!string.IsNullOrEmpty(task.Exclude) && !string.IsNullOrEmpty(project.CopyOptionInclude))) {
                             return new InvalidOperationException("Wrong include/exclude copy parameters.");
-                    }
-                    char[] separators = new char[] { ';' };
+                    }                    
                     bool include = false;
                     HashSet<string> filterSet = new HashSet<string>();
                     if(!string.IsNullOrEmpty(task.Exclude) || !string.IsNullOrEmpty(project.CopyOptionExclude)) {
                         if(task.Exclude != null){
-                            foreach(var exItem in task.Exclude.Split(separators, StringSplitOptions.RemoveEmptyEntries)) {
+                            foreach(var exItem in task.Exclude.Split(separatorChars, StringSplitOptions.RemoveEmptyEntries)) {
                                 filterSet.Add(exItem);
                             }
                         }
                         if(project.CopyOptionExclude != null) {
-                            foreach(var exItem in project.CopyOptionExclude.Split(separators, StringSplitOptions.RemoveEmptyEntries)) {
+                            foreach(var exItem in project.CopyOptionExclude.Split(separatorChars, StringSplitOptions.RemoveEmptyEntries)) {
                                 filterSet.Add(exItem);
                             }
                         }
                     }else if(!string.IsNullOrEmpty(task.Include) || !string.IsNullOrEmpty(project.CopyOptionInclude)) {
                         include = true;
                         if(task.Include != null) {
-                            foreach(var inItem in task.Include.Split(separators, StringSplitOptions.RemoveEmptyEntries)) {
+                            foreach(var inItem in task.Include.Split(separatorChars, StringSplitOptions.RemoveEmptyEntries)) {
                                 filterSet.Add(inItem);
                             }
                         }
                         if(project.CopyOptionInclude != null) {
-                            foreach(var inItem in project.CopyOptionInclude.Split(separators, StringSplitOptions.RemoveEmptyEntries)) {
+                            foreach(var inItem in project.CopyOptionInclude.Split(separatorChars, StringSplitOptions.RemoveEmptyEntries)) {
                                 filterSet.Add(inItem);
                             }
                         }
                     }
-                    string[] sourceDirectories;
+                    List<string> sourceDirectories = new List<string>();
                     string[] sourceFiles;
+                    sourceDirectories.Add(task.SourcePath);
                     if(!task.Recursive) {
-                        sourceDirectories = new string[] { task.SourcePath };
                         sourceFiles = Directory.GetFiles(task.SourcePath, "*", SearchOption.TopDirectoryOnly);
                     } else {
-                        sourceDirectories = Directory.GetDirectories(task.SourcePath, "*", SearchOption.AllDirectories);
+                        sourceDirectories.AddRange(Directory.GetDirectories(task.SourcePath, "*", SearchOption.AllDirectories));
                         sourceFiles = Directory.GetFiles(task.SourcePath, "*", SearchOption.AllDirectories);
                     }
                     int sourcePathLength = task.SourcePath.Length;
-                    List<string> directoriesToDelete = new List<string>(sourceDirectories.Length);
+                    List<string> directoriesToDelete = new List<string>(sourceDirectories.Count);
                     foreach(string dir in sourceDirectories) {
                         string partDir = dir.Remove(0, sourcePathLength).TrimStart('\\');
                         string destWDir = Path.Combine(task.DestPath, partDir);
@@ -133,7 +189,8 @@ namespace Hagbis.Build {
                             Directory.CreateDirectory(destWDir);
                         }
                     }
-                    Console.Write("Coping...");
+                    Console.WriteLine();
+                    Console.WriteLine("Coping: {0}...", task.SourcePath);
                     int lastLeft = Console.CursorLeft;
                     int lastTop = Console.CursorTop;
                     int fileIndex = 0;

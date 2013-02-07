@@ -54,7 +54,8 @@ namespace Hagbis.Build {
             task.AddDefines = ProcessString(task.AddDefines);
             if(task.ProcessingItems != null) {
                 foreach(var processintItem in task.ProcessingItems) {
-                    processintItem.Key = ProcessString(processintItem.Key);
+                    processintItem.Element = ProcessString(processintItem.Element);
+                    processintItem.Attribute = ProcessString(processintItem.Attribute);
                     processintItem.ToAdd = ProcessString(processintItem.ToAdd);
                     processintItem.ToRemove = ProcessString(processintItem.ToRemove);
                 }
