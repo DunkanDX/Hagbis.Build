@@ -8,6 +8,7 @@ namespace Hagbis.Build {
     public class ExecTask : Task {
         string[] parameters;
         string execPath;
+        bool shellStart;
         [XmlElement]
         public string ExecPath {
             get { return execPath; }
@@ -17,6 +18,11 @@ namespace Hagbis.Build {
         public string[] Parameters {
             get { return parameters; }
             set { parameters = value; }
+        }
+        [XmlAttribute("shellStart")]
+        public bool ShellStart {
+            get { return shellStart; }
+            set { shellStart = value; }
         }
         public override object Accept(ITaskProcessor processor) {
             if(processor == null) return null;

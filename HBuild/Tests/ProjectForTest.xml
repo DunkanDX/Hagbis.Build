@@ -11,7 +11,7 @@
       <TextProcessing pattern="pt" result="res" type="Replace"/>
     </BCBBuild>
     <Copy id="copyTask1" sourcePath="sourcePath" destPath="destPath" include="exe;com" exclude="txt;doc" recursive="true"/>
-    <Exec>
+    <Exec shellStart="true">
       <ExecPath>C:\sds\sds.exe</ExecPath>
       <Parameter>-s</Parameter>
       <Parameter>-t</Parameter>

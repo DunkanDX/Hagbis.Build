@@ -49,7 +49,10 @@ namespace Hagbis.Build {
             } finally {
                 Directory.SetCurrentDirectory(currentDir);
                 if(removeProjectFile && File.Exists(project))
-                    File.Delete(project);
+                        File.Delete(project);
+                string makeFileName = Path.ChangeExtension(project, "mak");
+                if(File.Exists(makeFileName))
+                    File.Delete(makeFileName);
             }
             return null;
         }
@@ -111,8 +114,9 @@ namespace Hagbis.Build {
             psi.UseShellExecute = false;
             psi.RedirectStandardOutput = true;
             Process process = Process.Start(psi);
-            string results = process.StandardOutput.ReadToEnd();
-            Console.WriteLine(results);
+            do {
+                Console.WriteLine(process.StandardOutput.ReadLine());
+            } while(!process.StandardOutput.EndOfStream);
             if(process.ExitCode == 1) {
                 throw new InvalidOperationException(string.Format("Erros while bpr2mak for {0}", project));
             }
@@ -124,8 +128,9 @@ namespace Hagbis.Build {
             psi.UseShellExecute = false;
             psi.RedirectStandardOutput = true;
             Process process = Process.Start(psi);
-            string results = process.StandardOutput.ReadToEnd();
-            Console.WriteLine(results);
+            do {
+                Console.WriteLine(process.StandardOutput.ReadLine());
+            } while(!process.StandardOutput.EndOfStream);
             if(process.ExitCode == 1) {
                 throw new InvalidOperationException(string.Format("Erros while make for {0}", project));
             }
@@ -225,7 +230,14 @@ namespace Hagbis.Build {
             if(task == null) return null;
             try {
                 ProcessStartInfo psi = task.Parameters == null ? new ProcessStartInfo(task.ExecPath) : new ProcessStartInfo(task.ExecPath, string.Join(" ", task.Parameters));
+                psi.UseShellExecute = task.ShellStart;
+                psi.RedirectStandardOutput = !task.ShellStart;
                 Process process = Process.Start(psi);
+                if(!task.ShellStart) {
+                    do {
+                        Console.WriteLine(process.StandardOutput.ReadLine());
+                    } while(!process.StandardOutput.EndOfStream);
+                }
                 process.WaitForExit();
                 if(process.ExitCode == 1) {
                     return new InvalidOperationException(string.Format("Erros while execute: {0} {1}", task.ExecPath, string.Join(" ", task.Parameters)));

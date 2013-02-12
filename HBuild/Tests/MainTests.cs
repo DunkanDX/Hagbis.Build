@@ -58,6 +58,7 @@ namespace Hagbis.Build.Tests {
 
             ExecTask execTask = project.Tasks[2] as ExecTask;
             Assert.IsNotNull(execTask);
+            Assert.IsTrue(execTask.ShellStart);
             Assert.AreEqual(@"C:\sds\sds.exe", execTask.ExecPath);
             Assert.AreEqual(3, execTask.Parameters.Length);
             Assert.AreEqual("-s", execTask.Parameters[0]);
